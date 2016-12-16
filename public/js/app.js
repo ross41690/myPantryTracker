@@ -1,116 +1,116 @@
-angular.module("contactsApp", ['ngRoute'])
+angular.module("recipesApp", ['ngRoute'])
     .config(function($routeProvider) {
         $routeProvider
             .when("/", {
                 templateUrl: "list.html",
                 controller: "ListController",
                 resolve: {
-                    contacts: function(Contacts) {
-                        return Contacts.getContacts();
+                    recipes: function(Recipes) {
+                        return Recipes.getRecipes();
                     }
                 }
             })
-            .when("/new/contact", {
-                controller: "NewContactController",
-                templateUrl: "contact-form.html"
+            .when("/new/recipe", {
+                controller: "NewRecipeController",
+                templateUrl: "recipe-form.html"
             })
-            .when("/contact/:contactId", {
-                controller: "EditContactController",
-                templateUrl: "contact.html"
+            .when("/recipe/:recipeId", {
+                controller: "EditRecipeController",
+                templateUrl: "recipe.html"
             })
             .otherwise({
                 redirectTo: "/"
             })
     })
-    .service("Contacts", function($http) {
-        this.getContacts = function() {
-            return $http.get("/contacts").
+    .service("Recipes", function($http) {
+        this.getRecipes = function() {
+            return $http.get("/recipes").
                 then(function(response) {
                     return response;
                 }, function(response) {
-                    alert("Error finding contacts.");
+                    alert("Error finding recipes.");
                 });
         }
-        this.createContact = function(contact) {
-            return $http.post("/contacts", contact).
+        this.createRecipe = function(recipe) {
+            return $http.post("/recipes", recipe).
                 then(function(response) {
                     return response;
                 }, function(response) {
-                    alert("Error creating contact.");
+                    alert("Error creating recipe.");
                 });
         }
-        this.getContact = function(contactId) {
-            var url = "/contacts/" + contactId;
+        this.getRecipe = function(recipeId) {
+            var url = "/recipes/" + recipeId;
             return $http.get(url).
                 then(function(response) {
                     return response;
                 }, function(response) {
-                    alert("Error finding this contact.");
+                    alert("Error finding this recipe.");
                 });
         }
-        this.editContact = function(contact) {
-            var url = "/contacts/" + contact._id;
-            console.log(contact._id);
-            return $http.put(url, contact).
+        this.editRecipe = function(recipe) {
+            var url = "/recipes/" + recipe._id;
+            console.log(recipe._id);
+            return $http.put(url, recipe).
                 then(function(response) {
                     return response;
                 }, function(response) {
-                    alert("Error editing this contact.");
+                    alert("Error editing this recipe.");
                     console.log(response);
                 });
         }
-        this.deleteContact = function(contactId) {
-            var url = "/contacts/" + contactId;
+        this.deleteRecipe = function(recipeId) {
+            var url = "/recipes/" + recipeId;
             return $http.delete(url).
                 then(function(response) {
                     return response;
                 }, function(response) {
-                    alert("Error deleting this contact.");
+                    alert("Error deleting this recipe.");
                     console.log(response);
                 });
         }
     })
-    .controller("ListController", function(contacts, $scope) {
-        $scope.contacts = contacts.data;
+    .controller("ListController", function(recipes, $scope) {
+        $scope.recipes = recipes.data;
     })
-    .controller("NewContactController", function($scope, $location, Contacts) {
+    .controller("NewRecipeController", function($scope, $location, Recipes) {
         $scope.back = function() {
             $location.path("#/");
         }
 
-        $scope.saveContact = function(contact) {
-            Contacts.createContact(contact).then(function(doc) {
-                var contactUrl = "/contact/" + doc.data._id;
-                $location.path(contactUrl);
+        $scope.saveRecipe = function(recipe) {
+            Recipes.createRecipe(recipe).then(function(doc) {
+                var recipeUrl = "/recipe/" + doc.data._id;
+                $location.path(recipeUrl);
             }, function(response) {
                 alert(response);
             });
         }
     })
-    .controller("EditContactController", function($scope, $routeParams, Contacts) {
-        Contacts.getContact($routeParams.contactId).then(function(doc) {
-            $scope.contact = doc.data;
+    .controller("EditRecipeController", function($scope, $routeParams, Recipes) {
+        Recipes.getRecipe($routeParams.recipeId).then(function(doc) {
+            $scope.recipe = doc.data;
         }, function(response) {
             alert(response);
         });
 
         $scope.toggleEdit = function() {
             $scope.editMode = true;
-            $scope.contactFormUrl = "contact-form.html";
+            $scope.recipeFormUrl = "recipe-form.html";
         }
 
         $scope.back = function() {
             $scope.editMode = false;
-            $scope.contactFormUrl = "";
+            $scope.recipeFormUrl = "";
         }
 
-        $scope.saveContact = function(contact) {
-            Contacts.editContact(contact);
+        $scope.saveRecipe = function(recipe) {
+            Recipes.editRecipe(recipe);
             $scope.editMode = false;
-            $scope.contactFormUrl = "";
+            $scope.recipeFormUrl = "";
         }
 
-        $scope.deleteContact = function(contactId) {
-            Contacts.deleteContact(contactId);
+        $scope.deleteRecipe = function(recipeId) {
+            Recipes.deleteRecipe(recipeId);
         }
     });
